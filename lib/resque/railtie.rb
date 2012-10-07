@@ -30,14 +30,6 @@ module Resque
 
     rake_tasks do
       require 'resque/tasks'
-
-      task 'resque:setup' => :environment do
-        if defined? ActiveRecord::Base
-          Resque.after_fork do |job|
-            ActiveRecord::Base.clear_active_connections!
-          end
-        end
-      end
     end
 
     initializer 'resque.configure' do
@@ -59,6 +51,17 @@ module Resque
           require 'resque/rails/queue'
           Resque::Rails::Queue.new(config.resque.redis)
         end
+    end
+
+    initializer 'resque.before_fork.active_record' do
+      require 'active_support/lazy_load_hooks'
+
+      ActiveSupport.on_load :active_record do
+        require 'resque'
+        Resque.before_fork do |job|
+          ActiveRecord::Base.clear_all_connections!
+        end
+      end
     end
 
     def connect_to_redis(config)
