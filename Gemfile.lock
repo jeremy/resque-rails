@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/defunkt/resque.git
-  revision: 2c874b3d2ba53ec77f0d0ddd88b96ca872e02217
+  revision: 3f67df57d04762b7f9eac88a71d6b94d639957c5
   specs:
-    resque (1.21.0)
+    resque (1.22.0)
       json
       redis-namespace (~> 1.0)
       sinatra (>= 0.9.2)
@@ -22,7 +22,7 @@ GIT
 
 GIT
   remote: git://github.com/rails/rails.git
-  revision: 0409c69faaf7891bd2eddd73cc794c85890dc233
+  revision: 800604e4452dcc39849cbab087d96c3b7ca44e47
   specs:
     actionmailer (4.0.0.beta)
       actionpack (= 4.0.0.beta)
@@ -33,7 +33,6 @@ GIT
       erubis (~> 2.7.0)
       journey (~> 2.0.0)
       rack (~> 1.4.1)
-      rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
     activemodel (4.0.0.beta)
       activesupport (= 4.0.0.beta)
@@ -45,7 +44,7 @@ GIT
       arel (~> 3.0.2)
     activesupport (4.0.0.beta)
       i18n (~> 0.6)
-      minitest (~> 3.2)
+      minitest (~> 4.1)
       multi_json (~> 1.3)
       tzinfo (~> 0.3.33)
     rails (4.0.0.beta)
@@ -67,7 +66,7 @@ PATH
   remote: .
   specs:
     resque-rails (1.0.0)
-      rails
+      rails (~> 4.0.0.beta)
       resque
 
 GEM
@@ -84,20 +83,18 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.19)
-    minitest (3.5.0)
+    minitest (4.1.0)
     multi_json (1.3.6)
     polyglot (0.3.3)
     rack (1.4.1)
-    rack-cache (1.2)
-      rack (>= 0.4)
     rack-protection (1.2.0)
       rack
-    rack-test (0.6.1)
+    rack-test (0.6.2)
       rack (>= 1.0)
     rake (0.9.2.2)
     rdoc (3.12)
       json (~> 1.4)
-    redis (3.0.1)
+    redis (3.0.2)
     redis-namespace (1.2.1)
       redis (~> 3.0.0)
     sinatra (1.3.3)
