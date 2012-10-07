@@ -26,8 +26,4 @@ class QueueTest < MiniTest::Unit::TestCase
 
     assert job.pushed
   end
-
-  def test_pop_delegates
-    assert_nil @queue.pop(:non_block)
-  end
 end

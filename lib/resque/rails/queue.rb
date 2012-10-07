@@ -14,10 +14,6 @@ module Resque
       def push(job)
         Resque::Job.create @queue, Job, job
       end
-
-      def pop(*args)
-        @queue.pop *args
-      end
     end
 
     class Job
