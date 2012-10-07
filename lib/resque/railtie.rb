@@ -51,7 +51,7 @@ module Resque
       end
     end
 
-    initializer 'resque.set_rails_default_queue' do
+    initializer 'resque.set_rails_default_queue', after: 'resque.configure' do
       Rails.queue[:default] =
         if config.resque.inline
           ActiveSupport::SynchronousQueue.new
