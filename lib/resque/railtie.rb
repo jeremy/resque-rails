@@ -1,4 +1,5 @@
 require 'rails/railtie'
+require 'active_support/ordered_options'
 
 module Resque
   # App config:
