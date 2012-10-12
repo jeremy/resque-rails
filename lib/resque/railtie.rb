@@ -21,35 +21,42 @@ module Resque
   #     timeout: 1
   #
   class Railtie < Rails::Railtie
-    config.resque = ActiveSupport::OrderedOptions.new
+    config.resque = ActiveSupport::OrderedOptions.new.tap do |resque|
+      resque.queue = :rails
+      resque.inline = false
 
-    config.resque.redis = nil
-    config.resque.redis_config = nil
-    config.resque.redis_config_path = 'config/resque-redis.yml'
-    config.resque.inline = false
+      resque.redis_config_path = 'config/resque-redis.yml'
+      resque.redis_config = nil
+      resque.redis = nil
+    end
 
     rake_tasks do
       require 'resque/tasks'
     end
 
     initializer 'resque.configure' do
+      config.resque.env   ||= Rails.env
+      config.resque.queue ||= "#{app.railtie_name}_#{config.resque.env}"
+
       if config.resque.inline.nil? && config.resque.redis.nil?
-        config = redis_env_config
+        require 'psych'
+        config.resque.redis_config_path ||= 'config/resque-redis.yml'
+        config.resque.redis_config ||= Psych.load(config.root.join(config.resque.redis_config_path))[config.resque.env].try(:symbolize_keys)
+
         if config.nil? || config[:inline]
           config.resque.inline = true
         else
-          config.resque.redis = connect_to_redis(config)
+          require 'redis'
+          config.resque.redis = Redis.new(config)
         end
       end
-    end
 
-    initializer 'resque.set_rails_default_queue', after: 'resque.configure' do
       Rails.queue[:default] =
         if config.resque.inline
           ActiveSupport::SynchronousQueue.new
         else
           require 'resque/rails/queue'
-          Resque::Rails::Queue.new(config.resque.redis)
+          Resque::Rails::Queue.new(config.resque.queue)
         end
     end
 
@@ -62,31 +69,6 @@ module Resque
           ActiveRecord::Base.clear_all_connections!
         end
       end
-    end
-
-    def connect_to_redis(config)
-      require 'redis'
-      Redis.new(config).tap do |redis|
-        redis.ping
-        redis.client.disconnect
-      end
-    end
-
-    def resque_env
-      config.resque.env ||= Rails.env
-    end
-
-    def redis_env_config
-      redis_config[resque_env].try(:symbolize_keys)
-    end
-
-    def redis_config
-      require 'psych'
-      config.resque.redis_config || Psych.load(redis_config_path)
-    end
-
-    def redis_config_path
-      config.root.join(config.resque.redis_config_path || 'config/resque-redis.yml')
     end
   end
 end
