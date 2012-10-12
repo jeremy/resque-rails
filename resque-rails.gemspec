@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 1.9.2'
 
-  s.add_dependency 'resque' #,  '~> 2.0'  # master branch is still 1.22
-  s.add_dependency 'rails',   '~> 4.0.0.beta'
+  s.add_dependency 'resque'
+  s.add_dependency 'rails', '~> 4.0.0.beta'
   s.add_development_dependency 'minitest'
 
   s.files = Dir["#{File.dirname(__FILE__)}/**/*"]
