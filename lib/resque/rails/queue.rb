@@ -1,32 +1,22 @@
+require 'resque'
+
 module Resque
   module Rails
     class Queue
-      attr_reader :queue
+      attr_reader :name
 
-      def initialize(options)
-        require 'resque'
-        @queue = Resque::Queue.new \
-          options.fetch(:queue, :rails),
-          options.fetch(:redis),
-          Marshal
+      def initialize(name)
+        @name = name
       end
 
       def push(job)
-        Resque::Job.create @queue, Job, job
+        Resque.enqueue_to @name, MarshaledJob, Marshal.dump(job)
       end
     end
 
-    class Job
-      def self.perform(job)
-        job.run
-      end
-
-      def initialize(job)
-        @job = job
-      end
-
-      def run
-        @job.run
+    class MarshaledJob
+      def self.perform(marshaled_job)
+        Marshal.load(marshaled_job).run
       end
     end
   end

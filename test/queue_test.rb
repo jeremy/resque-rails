@@ -1,29 +1,31 @@
 require 'test_helper'
 require 'resque/rails/queue'
-require 'redis'
+
+$pushed = []
+def Resque.push(queue, payload)
+  $pushed << [queue, payload]
+end
 
 class QueueTest < MiniTest::Unit::TestCase
   class TestJob
-    attr_accessor :pushed
   end
 
   def setup
-    @redis = Redis.new
-    @queue = Resque::Rails::Queue.new(redis: @redis)
+    @queue = Resque::Rails::Queue.new(:rails)
   end
 
-  def test_wraps_a_resque_queue
-    assert_equal :rails, @queue.queue.name
+  def teardown
+    $pushed.clear
   end
 
-  def test_pushes_job_wrapper
-    def @queue.<<(job)
-      job.pushed = true
-    end
-
+  def test_pushes_marshaled_job_wrapper
     job = TestJob.new
     @queue.push job
-
-    assert job.pushed
+    assert_pushed :rails, 'class' => 'Resque::Rails::MarshaledJob', 'args' => [Marshal.dump(job)]
   end
+
+  private
+    def assert_pushed(queue, payload)
+      assert_equal [queue, payload], $pushed.last
+    end
 end
