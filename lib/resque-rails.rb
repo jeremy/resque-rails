@@ -1,1 +1,1 @@
-require 'resque/rails'
+require 'resque/railtie'
