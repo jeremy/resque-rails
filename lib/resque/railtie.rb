@@ -22,7 +22,7 @@ module Resque
   #
   class Railtie < Rails::Railtie
     config.resque = ActiveSupport::OrderedOptions.new.tap do |resque|
-      resque.queue = :rails
+      resque.queue = nil
       resque.inline = false
 
       resque.redis_config_path = 'config/resque-redis.yml'
@@ -34,9 +34,9 @@ module Resque
       require 'resque/tasks'
     end
 
-    initializer 'resque.configure' do
+    initializer 'resque.configure' do |app|
       config.resque.env   ||= Rails.env
-      config.resque.queue ||= "#{app.railtie_name}_#{config.resque.env}"
+      config.resque.queue = :"#{app.railtie_name}_#{config.resque.env}"
 
       if config.resque.inline.nil? && config.resque.redis.nil?
         require 'psych'
@@ -51,7 +51,7 @@ module Resque
         end
       end
 
-      Rails.queue[:default] =
+      app.queue =
         if config.resque.inline
           ActiveSupport::SynchronousQueue.new
         else
