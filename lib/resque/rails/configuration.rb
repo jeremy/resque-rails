@@ -19,8 +19,9 @@ module Resque
           Resque.inline = true
         else
           Resque.redis = build_redis
-          app.queue = Resque::Rails::Queue.new(queue)
         end
+
+        app.queue = Resque::Rails::Queue.new(queue)
       end
 
       def env

@@ -50,7 +50,7 @@ class RailtieTest < MiniTest::Unit::TestCase
     @app.initialize!
 
     assert_equal true, @app.config.resque.inline
-    assert !@app.queue.kind_of?(Resque::Rails::Queue)
+    assert_kind_of Resque::Rails::Queue, @app.queue
     assert_nil @app.config.resque.redis
   end
 
@@ -59,7 +59,7 @@ class RailtieTest < MiniTest::Unit::TestCase
     @app.initialize!
 
     assert_equal true, @app.config.resque.inline
-    assert !@app.queue.kind_of?(Resque::Rails::Queue)
+    assert_kind_of Resque::Rails::Queue, @app.queue
     assert_nil @app.config.resque.redis
   end
 end
