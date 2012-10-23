@@ -3,14 +3,15 @@ require 'resque'
 module Resque
   module Rails
     class Queue
-      attr_reader :name
+      attr_reader :default_queue_name
 
-      def initialize(name)
-        @name = name
+      def initialize(default_queue_name)
+        @default_queue_name = default_queue_name
       end
 
       def push(job)
-        Resque.enqueue_to @name, MarshaledJob, Marshal.dump(job)
+        queue = job.respond_to?(:queue_name) ? job.queue_name : default_queue_name
+        Resque.enqueue_to queue, MarshaledJob, Marshal.dump(job)
       end
     end
 
